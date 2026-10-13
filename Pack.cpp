@@ -78,6 +78,7 @@ void Pack::shuffle()
             }
         }
     }
+    next = 0;
 }
 
 // EFFECTS: returns true if there are no more cards left in the pack
