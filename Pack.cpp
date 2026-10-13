@@ -40,11 +40,7 @@ Pack::Pack(std::istream &pack_input)
 Card Pack::deal_one()
 {
     ++next;
-    Card tempcard = cards[next - 1];
-    int index = 24 - next;
-    std::array<Card, index> temparray;
-    for (int i = 1;)
-        return tempcard;
+    return cards[next - 1];
 }
 
 // EFFECTS: Resets next index to first card in the Pack
@@ -87,4 +83,12 @@ void Pack::shuffle()
 // EFFECTS: returns true if there are no more cards left in the pack
 bool Pack::empty() const
 {
+    if (next > 23)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
