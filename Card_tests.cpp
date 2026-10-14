@@ -56,6 +56,15 @@ TEST(test_bowers)
     ASSERT_EQUAL(false, random.is_right_bower(trump));
 }
 
+TEST(test_is_trump)
+{
+    Suit trump = DIAMONDS;
+    Card a(NINE, DIAMONDS);
+    Card b(NINE, SPADES);
+    ASSERT_EQUAL(true, a.is_trump(trump));
+    ASSERT_EQUAL(false, b.is_trump(trump));
+}
+
 TEST(test_suit_next)
 {
     ASSERT_EQUAL(SPADES, Suit_next(CLUBS));
