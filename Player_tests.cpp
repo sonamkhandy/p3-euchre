@@ -5,11 +5,16 @@
 
 using namespace std;
 
-TEST(test_player_get_name) {
-    Player * alice = Player_factory("Alice", "Simple");
+TEST(test_player_get_name)
+{
+    Player *alice = Player_factory("Alice", "Simple");
     ASSERT_EQUAL("Alice", alice->get_name());
 
     delete alice;
+}
+
+TEST(test_add_and_discard)
+{
 }
 
 // Add more tests here
