@@ -99,4 +99,64 @@ TEST(test_card_less_with_led)
     ASSERT_EQUAL(true, Card_less(e, led_card, led_card, trump));  // second is higher led
 }
 
+TEST(test_operator_equals)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(true, operator==(a, c));  // equal
+    ASSERT_EQUAL(false, operator==(a, b)); // first is smaller
+    ASSERT_EQUAL(false, operator==(b, c)); // second is smaller
+}
+
+TEST(test_operator_not_equals)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(false, operator!=(a, c)); // equal
+    ASSERT_EQUAL(true, operator!=(a, b));  // first is smaller
+    ASSERT_EQUAL(true, operator!=(b, c));  // second is smaller
+}
+
+TEST(test_operator_less_than)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(false, operator<(a, c)); // equal
+    ASSERT_EQUAL(true, operator<(a, b));  // first is smaller
+    ASSERT_EQUAL(false, operator<(b, c)); // second is smaller
+}
+
+TEST(test_operator_greater_than)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(false, operator>(a, c)); // equal
+    ASSERT_EQUAL(false, operator>(a, b)); // first is smaller
+    ASSERT_EQUAL(true, operator>(b, c));  // second is smaller
+}
+
+TEST(test_operator_less_than_equal_to)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(true, operator<=(a, c));  // equal
+    ASSERT_EQUAL(true, operator<=(a, b));  // first is smaller
+    ASSERT_EQUAL(false, operator<=(b, c)); // second is smaller
+}
+
+TEST(test_operator_greater_than_equal_to)
+{
+    Card a(NINE, SPADES);
+    Card b(QUEEN, DIAMONDS);
+    Card c(NINE, HEARTS);
+    ASSERT_EQUAL(true, operator>=(a, c));  // equal
+    ASSERT_EQUAL(false, operator>=(a, b)); // first is smaller
+    ASSERT_EQUAL(true, operator>=(b, c));  // second is smaller
+}
+
 TEST_MAIN()
