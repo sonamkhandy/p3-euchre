@@ -65,6 +65,24 @@ TEST(test_is_trump)
     ASSERT_EQUAL(false, b.is_trump(trump));
 }
 
+TEST(test_is_trump_bowers)
+{
+    Suit trump = DIAMONDS;
+
+    Card right_bower(JACK, DIAMONDS);
+    Card left_bower(JACK, HEARTS);   
+    Card jack_spades(JACK, SPADES);  
+    Card jack_clubs(JACK, CLUBS);    
+
+    //checks trump is trump
+    ASSERT_EQUAL(true, right_bower.is_trump(trump));
+    //checks to make sure left bower is trump
+    ASSERT_EQUAL(true, left_bower.is_trump(trump));
+    //make sure other jacks are not trumps
+    ASSERT_EQUAL(false, jack_spades.is_trump(trump));
+    ASSERT_EQUAL(false, jack_clubs.is_trump(trump));
+}
+
 TEST(test_suit_next)
 {
     ASSERT_EQUAL(SPADES, Suit_next(CLUBS));
@@ -112,7 +130,7 @@ TEST(test_operator_equals)
 {
     Card a(NINE, SPADES);
     Card b(QUEEN, DIAMONDS);
-    Card c(NINE, HEARTS);
+    Card c(NINE, SPADES);
     ASSERT_EQUAL(true, operator==(a, c));  // equal
     ASSERT_EQUAL(false, operator==(a, b)); // first is smaller
     ASSERT_EQUAL(false, operator==(b, c)); // second is smaller
@@ -122,7 +140,7 @@ TEST(test_operator_not_equals)
 {
     Card a(NINE, SPADES);
     Card b(QUEEN, DIAMONDS);
-    Card c(NINE, HEARTS);
+    Card c(NINE, SPADES);
     ASSERT_EQUAL(false, operator!=(a, c)); // equal
     ASSERT_EQUAL(true, operator!=(a, b));  // first is smaller
     ASSERT_EQUAL(true, operator!=(b, c));  // second is smaller
@@ -132,7 +150,7 @@ TEST(test_operator_less_than)
 {
     Card a(NINE, SPADES);
     Card b(QUEEN, DIAMONDS);
-    Card c(NINE, HEARTS);
+    Card c(NINE, SPADES);
     ASSERT_EQUAL(false, operator<(a, c)); // equal
     ASSERT_EQUAL(true, operator<(a, b));  // first is smaller
     ASSERT_EQUAL(false, operator<(b, c)); // second is smaller
@@ -162,7 +180,7 @@ TEST(test_operator_greater_than_equal_to)
 {
     Card a(NINE, SPADES);
     Card b(QUEEN, DIAMONDS);
-    Card c(NINE, HEARTS);
+    Card c(NINE, SPADES);
     ASSERT_EQUAL(true, operator>=(a, c));  // equal
     ASSERT_EQUAL(false, operator>=(a, b)); // first is smaller
     ASSERT_EQUAL(true, operator>=(b, c));  // second is smaller

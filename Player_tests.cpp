@@ -475,6 +475,58 @@ TEST(add_and_discard_keep_left_bower)
     delete amani;
 }
 
+TEST(add_and_discard_trump_beats_high_non_trump) {
+    Player *amani = Player_factory("Amani", "Simple");
+
+    // hand
+    amani->add_card(Card(TEN, HEARTS));
+    amani->add_card(Card(QUEEN, HEARTS));
+    amani->add_card(Card(KING, HEARTS));
+    amani->add_card(Card(JACK, HEARTS));
+    //card to be discarded
+    amani->add_card(Card(ACE, SPADES)); 
+
+    Card upcard = Card(NINE, HEARTS);
+    amani->add_and_discard(upcard);
+
+    
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(JACK, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(KING, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(TEN, HEARTS));
+    //nine stays while the ace is not present
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(NINE, HEARTS)); 
+
+    delete amani;
+}
+
+TEST(add_and_discard_left_bower_is_not_lowest) {
+    Player *amani = Player_factory("Amani", "Simple");
+
+    //hand
+
+    //left bower
+    amani->add_card(Card(JACK, DIAMONDS)); 
+    amani->add_card(Card(TEN, SPADES));    
+    amani->add_card(Card(QUEEN, SPADES));  
+    amani->add_card(Card(KING, SPADES));   
+    amani->add_card(Card(ACE, SPADES));    
+
+    Card upcard = Card(QUEEN, HEARTS);
+    amani->add_and_discard(upcard);
+
+    //discard highest non-trumps
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(ACE, SPADES));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(KING, SPADES));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, SPADES));
+
+    //discard left bower then highest trumps - ten of spades got dropped
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(JACK, DIAMONDS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, HEARTS));
+
+    delete amani;
+}
+
 //lead_card tests
 
 TEST(test_lead_card_all_trump) {
