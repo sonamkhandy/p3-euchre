@@ -281,7 +281,7 @@ public:
             {
                 hand.erase(hand.begin() + discard_card_index);
                 hand.push_back(upcard);
-                sort(hand.begin(), hand.end());
+                // sort(hand.begin(), hand.end());
             }
         }
     }
