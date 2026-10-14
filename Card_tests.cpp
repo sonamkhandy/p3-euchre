@@ -80,8 +80,8 @@ TEST(test_card_less_with_led)
 
     Card c(QUEEN, DIAMONDS);
     trump = HEARTS;
-    ASSERT_EQUAL(true, Card_less(c, b, led_card, trump));  // second is trump (ISSUE HERE)
-    ASSERT_EQUAL(false, Card_less(b, c, led_card, trump)); // first is trump (ISSUE HERE)
+    ASSERT_EQUAL(true, Card_less(c, b, led_card, trump));  // second is trump
+    ASSERT_EQUAL(false, Card_less(b, c, led_card, trump)); // first is trump
 
     Card d(QUEEN, HEARTS);
     ASSERT_EQUAL(false, Card_less(d, b, led_card, trump)); // first is higher trump, non led
