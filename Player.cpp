@@ -85,7 +85,7 @@ public:
                         ++counter;
                     }
                 }
-                if (counter >= 2)
+                if (counter >= 1)
                 {
                     order_up_suit = nextsuit;
                     return true;
