@@ -245,7 +245,6 @@ TEST(test_make_trump_r2_dealer_true)
     delete amani;
 }
 
-
 //rest of these is dealer = false bc then its just simple player logic
 TEST(test_make_trump_r2_trump_made_normal)
 {
@@ -393,19 +392,261 @@ TEST(test_make_trump_r2_trump_not_made_suit_of_upcard_instead_of_next_suit)
     delete amani;
 }
 
+//add and discard tests
 
-TEST(add_and_discard_trump_ordered_up)
+
+TEST(add_and_discard_normal)
 {
     Player *amani = Player_factory("Amani", "Simple");
 
     //hand
-    amani->add_card(Card(NINE, HEARTS));
+    amani->add_card(Card(NINE, DIAMONDS));
     amani->add_card(Card(TEN, DIAMONDS));
+    amani->add_card(Card(QUEEN, DIAMONDS));
+    amani->add_card(Card(KING, DIAMONDS));
+    amani->add_card(Card(ACE, DIAMONDS));
+
+    Card upcard = Card(TEN, HEARTS);
+
+    amani->add_and_discard(upcard);
+
+    //these would be the non trump cards that would leave in order from highest to lowest first
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(ACE, DIAMONDS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(KING, DIAMONDS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, DIAMONDS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(TEN, DIAMONDS));
+
+    //the upcard shouldve been kept and then the nine of diamonds should have been discarded and thus not present bc this is trump
+    ASSERT_EQUAL(amani->lead_card(HEARTS), upcard);
+
+    delete amani;
+}
+
+TEST(add_and_discard_discard_upcard)
+{
+    Player *amani = Player_factory("Amani", "Simple");
+
+    //hand
+    amani->add_card(Card(JACK, HEARTS));
+    amani->add_card(Card(TEN, HEARTS));
+    amani->add_card(Card(QUEEN, HEARTS));
+    amani->add_card(Card(KING, HEARTS));
+    amani->add_card(Card(ACE, HEARTS));
+
+    Card upcard = Card(NINE, HEARTS);
+
+    amani->add_and_discard(upcard);
+
+    //these would be the  trump cards that would leave in order from highest to lowest first - the nine of hearts should never enter
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(JACK, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(ACE, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(KING, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(TEN,HEARTS));
+
+    delete amani;
+}
+
+TEST(add_and_discard_keep_left_bower)
+{
+    Player *amani = Player_factory("Amani", "Simple");
+
+    //hand
+
+    //left bower
+    amani->add_card(Card(JACK, DIAMONDS));
+    amani->add_card(Card(JACK, HEARTS));
     amani->add_card(Card(QUEEN, HEARTS));
     amani->add_card(Card(KING, HEARTS));
     amani->add_card(Card(ACE, HEARTS));
 
     Card upcard = Card(TEN, HEARTS);
+
+    //upcard wont be picked up because its the smallest - just want to make sure that left bower ranks where it should
+    amani->add_and_discard(upcard);
+
+    //these would be the trump cards that would leave in order from highest to lowest first - including rank of left bower
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(JACK, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(JACK, DIAMONDS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(ACE, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(KING, HEARTS));
+    ASSERT_EQUAL(amani->lead_card(HEARTS), Card(QUEEN, HEARTS));
+
+    delete amani;
+}
+
+//lead_card tests
+
+TEST(test_lead_card_all_trump) {
+
+  Player *amani = Player_factory("Amani", "Simple");
+  
+  //hand
+  amani->add_card(Card(NINE, HEARTS));
+  amani->add_card(Card(TEN, HEARTS));
+  amani->add_card(Card(JACK, HEARTS));
+  amani->add_card(Card(QUEEN, HEARTS));
+  amani->add_card(Card(KING, HEARTS)); 
+
+  Card card_led = amani->lead_card(HEARTS);
+
+  // highest trump should lead
+  ASSERT_EQUAL(card_led, Card(JACK, HEARTS));
+
+  delete amani;
+}
+
+TEST(test_lead_card_all_trump_left_bower) {
+
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(NINE, HEARTS));
+  amani->add_card(Card(TEN, HEARTS));
+  //left bower, the one to be removed
+  amani->add_card(Card(JACK, DIAMONDS));
+  amani->add_card(Card(QUEEN, HEARTS));
+  amani->add_card(Card(KING, HEARTS)); 
+
+  Card card_led = amani->lead_card(HEARTS);
+
+  // highest trump should lead
+  ASSERT_EQUAL(card_led, Card(JACK, DIAMONDS));
+
+  delete amani;
+}
+
+TEST(test_lead_card_all_non_trump_except_left_bower) {
+
+  Player *amani = Player_factory("Amani", "Simple");
+  amani->add_card(Card(NINE, SPADES));
+  amani->add_card(Card(TEN, SPADES));
+  //left bower, should not be removed
+  amani->add_card(Card(JACK, SPADES));
+  amani->add_card(Card(QUEEN, SPADES));
+  amani->add_card(Card(KING, SPADES)); 
+
+  Card card_led = amani->lead_card(CLUBS);
+
+  // highest non-trump should lead
+  ASSERT_EQUAL(card_led, Card(KING, SPADES));
+
+  delete amani;
+}
+
+TEST(test_lead_card_mix_of_trump_and_non_trump) {
+
+  Player *amani = Player_factory("Amani", "Simple");
+  
+  //hand
+  amani->add_card(Card(NINE, SPADES));
+  amani->add_card(Card(TEN, HEARTS));
+  amani->add_card(Card(JACK, CLUBS));
+  amani->add_card(Card(QUEEN, CLUBS));
+  //should be removed
+  amani->add_card(Card(KING, SPADES)); 
+
+  Card card_led = amani->lead_card(CLUBS);
+
+  // highest non-trump should lead
+  ASSERT_EQUAL(card_led, Card(KING, SPADES));
+
+  delete amani;
+}
+
+TEST(test_lead_card_all_non_trump) {
+
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(NINE, CLUBS));
+  amani->add_card(Card(TEN, CLUBS));
+  amani->add_card(Card(JACK, CLUBS));
+  amani->add_card(Card(QUEEN, CLUBS));
+  //should be removed
+  amani->add_card(Card(KING, CLUBS)); 
+
+  Card card_led = amani->lead_card(HEARTS);
+
+  // highest non-trump should lead
+  ASSERT_EQUAL(card_led, Card(KING, CLUBS));
+
+  delete amani;
+}
+
+//play_card tests
+
+TEST(test_play_card_follow_suit) 
+{
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(NINE, SPADES));
+  amani->add_card(Card(TEN, SPADES));
+  amani->add_card(Card(QUEEN, SPADES));
+  amani->add_card(Card(NINE, CLUBS));
+  amani->add_card(Card(TEN, CLUBS));
+
+  Card led_card(KING, SPADES);
+  Card card_played = amani->play_card(led_card, HEARTS);
+
+  ASSERT_EQUAL(card_played, Card(QUEEN, SPADES));
+  delete amani;
+}
+
+TEST(test_play_card_lowest_in_hand_standard) 
+{
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(NINE, SPADES));
+  amani->add_card(Card(TEN, SPADES));
+  amani->add_card(Card(QUEEN, SPADES));
+  amani->add_card(Card(JACK, CLUBS));
+  amani->add_card(Card(TEN, CLUBS));
+
+  Card led_card(KING, HEARTS);
+  Card card_played = amani->play_card(led_card, DIAMONDS);
+
+  ASSERT_EQUAL(card_played, Card(NINE, SPADES));
+  delete amani;
+}
+
+TEST(test_play_card_follow_suit_left_bower) 
+{
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(NINE, SPADES));
+  amani->add_card(Card(TEN, SPADES));
+  amani->add_card(Card(QUEEN, SPADES));
+  amani->add_card(Card(ACE, SPADES));
+  amani->add_card(Card(JACK, CLUBS));
+
+  Card led_card(KING, SPADES);
+  Card card_played = amani->play_card(led_card, SPADES);
+
+  ASSERT_EQUAL(card_played, Card(JACK, CLUBS));
+  delete amani;
+}
+
+TEST(test_play_card_lowest_card_left_bower) 
+{
+  Player *amani = Player_factory("Amani", "Simple");
+
+  //hand
+  amani->add_card(Card(ACE, SPADES));
+  amani->add_card(Card(KING, SPADES));
+  amani->add_card(Card(QUEEN, SPADES));
+  //left bower, highest value
+  amani->add_card(Card(JACK, DIAMONDS));
+  amani->add_card(Card(KING, DIAMONDS));
+
+  Card led_card(KING, CLUBS);
+  Card card_played = amani->play_card(led_card, HEARTS);
+
+  ASSERT_EQUAL(card_played, Card(QUEEN, SPADES));
+  delete amani;
 }
 
 TEST_MAIN()

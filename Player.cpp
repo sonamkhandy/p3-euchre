@@ -9,9 +9,11 @@ using namespace std;
 
 class SimplePlayer : public Player
 {
-public:
+private:
     std::vector<Card> hand;
     std::string name;
+
+public:
 
     SimplePlayer(const std::string &name_in)
     {
@@ -134,9 +136,14 @@ public:
 
         for (int k = 0; k < hand.size(); ++k)
         {
-            if (hand[k].get_suit() != trump)
+            if (hand[k].get_suit(trump) != trump)
             {
-                if (!Card_less(hand[k], lead_card, trump))
+                if (lead_card.get_suit(trump) == trump)
+                {
+                    lead_card = hand[k];
+                    index_of_highest = k;
+                }
+                else if (!Card_less(hand[k], lead_card, trump))
                 {
                     lead_card = hand[k];
                     index_of_highest = k;
@@ -152,7 +159,7 @@ public:
         {
             for (int j = 0; j < hand.size(); ++j)
             {
-                if (Card_less(hand[j], lead_card, trump))
+                if (Card_less(lead_card, hand[j], trump))
                 {
                     lead_card = hand[j];
                     index_of_highest = j;
@@ -169,18 +176,17 @@ public:
     //   The card is removed from the player's hand.
     Card play_card(const Card &led_card, Suit trump) override
     {
-        int i = 0;
         int index_of_removed = 0;
-        Card removed_card = hand[i];
-        Suit led_suit = led_card.get_suit();
+        Card removed_card = hand[0];
+        Suit led_suit = led_card.get_suit(trump);
 
-        for (int k = 0; k < hand.size(); ++k)
+        for (int i = 0; i < hand.size(); ++i)
         {
-            if (removed_card.get_suit() == led_suit)
+            if (removed_card.get_suit(trump) == led_suit)
             {
-                if (hand[i].get_suit() == led_suit)
+                if (hand[i].get_suit(trump) == led_suit)
                 {
-                    if (hand[i] > removed_card)
+                    if (Card_less(removed_card, hand[i], trump))
                     {
                         removed_card = hand[i];
                         index_of_removed = i;
@@ -189,7 +195,7 @@ public:
             }
             else
             {
-                if (hand[i].get_suit() == led_suit)
+                if (hand[i].get_suit(trump) == led_suit)
                 {
                     removed_card = hand[i];
                     index_of_removed = i;
@@ -211,10 +217,11 @@ public:
 };
 class HumanPlayer : public Player
 {
-public:
+private:
     std::vector<Card> hand;
     std::string name;
-
+    
+public:
     HumanPlayer(const std::string &name_in)
     {
         name = name_in;
