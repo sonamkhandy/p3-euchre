@@ -140,7 +140,7 @@ public:
         {
             if (hand[k].get_suit() != trump)
             {
-                if (Card_less(hand[k], lead_card, trump))
+                if (!Card_less(hand[k], lead_card, trump))
                 {
                     lead_card = hand[k];
                     index_of_highest = k;
