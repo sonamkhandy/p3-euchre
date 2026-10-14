@@ -102,27 +102,24 @@ public:
     // EFFECTS  Player adds one card to hand and removes one card from hand.
     void add_and_discard(const Card &upcard) override
     {
-        Suit order_up_suit = SPADES;
+        Suit trump_suit = upcard.get_suit();
         Card lowest_card = upcard;
         int index_of_lowest = 0;
 
-        if (make_trump(upcard, true, 1, order_up_suit) == true)
+        for (int i = 0; i < hand.size(); ++i)
         {
-            for (int i = 0; i < MAX_HAND_SIZE; ++i)
+            if (Card_less(hand[i], lowest_card, trump_suit))
             {
-                if (Card_less(hand[i], lowest_card, order_up_suit))
-                {
-                    lowest_card = hand[i];
-                    index_of_lowest = i;
-                }
-            }
-
-            if (lowest_card != upcard)
-            {
-                hand.erase(hand.begin() + index_of_lowest);
-                hand[index_of_lowest] = upcard;
+                lowest_card = hand[i];
+                index_of_lowest = i;
             }
         }
+
+        if (lowest_card != upcard)
+        {
+            hand[index_of_lowest] = upcard;
+        }
+        
     }
 
     // REQUIRES Player has at least one card

@@ -372,7 +372,7 @@ TEST(test_make_trump_r2_trump_not_made_suit_of_upcard_instead_of_next_suit)
 
     //hand
     amani->add_card(Card(NINE, HEARTS));
-    amani->add_card(Card(TEN, HEARTS));
+    amani->add_card(Card(TEN, DIAMONDS));
     amani->add_card(Card(QUEEN, HEARTS));
     amani->add_card(Card(KING, HEARTS));
     amani->add_card(Card(ACE, HEARTS));
@@ -394,6 +394,18 @@ TEST(test_make_trump_r2_trump_not_made_suit_of_upcard_instead_of_next_suit)
 }
 
 
+TEST(add_and_discard_trump_ordered_up)
+{
+    Player *amani = Player_factory("Amani", "Simple");
 
+    //hand
+    amani->add_card(Card(NINE, HEARTS));
+    amani->add_card(Card(TEN, DIAMONDS));
+    amani->add_card(Card(QUEEN, HEARTS));
+    amani->add_card(Card(KING, HEARTS));
+    amani->add_card(Card(ACE, HEARTS));
+
+    Card upcard = Card(TEN, HEARTS);
+}
 
 TEST_MAIN()
