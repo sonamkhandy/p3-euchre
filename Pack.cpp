@@ -64,7 +64,7 @@ void Pack::shuffle()
         }
         for (int i = 12; i < 24; ++i)
         {
-            half2[i] = cards[i];
+            half2[i - 12] = cards[i];
         }
         for (int i = 0; i < 24; ++i)
         {
@@ -74,7 +74,7 @@ void Pack::shuffle()
             }
             else
             {
-                cards[i] = half1[(i + 1) / 2];
+                cards[i] = half1[(i - 1) / 2];
             }
         }
     }

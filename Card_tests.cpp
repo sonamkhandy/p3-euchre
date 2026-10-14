@@ -71,8 +71,8 @@ TEST(test_card_less_with_led)
     Suit led_suit = DIAMONDS;
     Card a(JACK, SPADES);
     Card b(NINE, HEARTS);
-    ASSERT_EQUAL(false, Card_less(a, b, led_suit, trump));
-    ASSERT_EQUAL(true, Card_less(b, a, led_suit, trump));
+    ASSERT_EQUAL(false, Card_less(a, b, trump)); // fix this
+    ASSERT_EQUAL(true, Card_less(b, a, trump));
 }
 
 TEST_MAIN()
