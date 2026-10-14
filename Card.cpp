@@ -374,6 +374,14 @@ bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump)
   {
     return Card_less(a, b, trump);
   }
+  else if (a.get_suit() == trump)
+  {
+    return false;
+  }
+  else if (b.get_suit() == trump)
+  {
+    return true;
+  }
   else if (a.get_suit() == led_suit && b.get_suit() != led_suit)
   {
     return false;
