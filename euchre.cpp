@@ -17,13 +17,37 @@ public:
     shuffle_mode = shuffle_input;
     points_to_win = points_input;
     players = players_input;
-    team_0_pts = 0;
-    team_1_pts = 0;
+    team_02_pts = 0;
+    team_13_pts = 0;
     dealer = 0;
     trump_suit = SPADES;
+    order_up_team = 0;
+    hand_number = 0;
   }
 
-  void play();
+  // code that you actually call in main to run euchre
+  void play()
+  {
+    while (team_02_pts < points_to_win && team_13_pts < points_to_win)
+    {
+      play_hand();
+      dealer = (dealer + 1) % 4;
+      ++hand_number;
+    }
+    if (team_02_pts >= points_to_win)
+    {
+      cout << players[0]->get_name() << " and " << players[2]->get_name() << " win!\n";
+    }
+    else if (team_13_pts >= points_to_win)
+    {
+      cout << players[1]->get_name() << " and " << players[3]->get_name() << " win!\n";
+    }
+
+    for (size_t i = 0; i < players.size(); ++i)
+    {
+      delete players[i];
+    }
+  }
 
 private:
   vector<Player *> players;
@@ -31,15 +55,21 @@ private:
   Suit trump_suit;
   bool shuffle_mode;
   int points_to_win;
-  int team_0_pts;
-  int team_1_pts;
+  int team_02_pts;
+  int team_13_pts;
   int dealer;
   int order_up_team;
+  int hand_number;
 
   // this just shuffles the deck
   void shuffle()
   {
-    pack.shuffle();
+    if (shuffle_mode)
+    {
+      pack.shuffle();
+    }
+    else
+      pack.reset();
   }
 
   // this would be the code to set up the start of the game - like all the cards the players have + the upcard
@@ -75,7 +105,7 @@ private:
 
       if (players[left_player]->make_trump(upcard, is_dealer, 1, trump_suit))
       {
-        cout << players[left_player]->get_name() << " orders up " << trump_suit << endl;
+        cout << players[left_player]->get_name() << " orders up " << trump_suit << "\n\n";
         players[dealer]->add_and_discard(upcard);
         order_up_team = left_player % 2;
         return;
@@ -94,7 +124,7 @@ private:
 
       if (players[left_player]->make_trump(upcard, is_dealer, 2, trump_suit))
       {
-        cout << players[left_player]->get_name() << " orders up " << trump_suit << endl;
+        cout << players[left_player]->get_name() << " orders up " << trump_suit << "\n\n";
         order_up_team = left_player % 2;
         return;
       }
@@ -106,19 +136,132 @@ private:
     }
   }
 
-  // code for the 5 tricks + score tallying
-  void play_hand();
+  // code to evaluate the individual tricks + who wins each trick + tallies the points
+  void play_tricks(int &trick_02_pts, int &trick_13_pts)
+  {
+    int leader = (dealer + 1) % 4;
+
+    for (int i = 0; i < 5; ++i)
+    {
+      Card lead_card = players[leader]->lead_card(trump_suit);
+      Card greatest_card = lead_card;
+      int trick_winner = leader;
+
+      cout << lead_card << " led by " << players[leader]->get_name() << "\n";
+
+      for (int j = 1; j < 4; ++j)
+      {
+        Card comparative = players[(leader + j) % 4]->play_card(lead_card, trump_suit);
+        cout << comparative << " played by " << players[(leader + j) % 4]->get_name() << "\n";
+
+        if (Card_less(greatest_card, comparative, lead_card, trump_suit))
+        {
+          greatest_card = comparative;
+          trick_winner = (leader + j) % 4;
+        }
+      }
+
+      cout << players[trick_winner]->get_name() << " takes the trick" << "\n\n";
+
+      if (trick_winner % 2 == 0)
+      {
+        ++trick_02_pts;
+      }
+      else
+      {
+        ++trick_13_pts;
+      }
+
+      leader = trick_winner;
+    }
+  }
+
+  void score_tally(int &trick_02_pts, int &trick_13_pts)
+  {
+    if (trick_02_pts >= 3)
+    {
+      cout << players[0]->get_name() << " and " << players[2]->get_name() << " win the hand\n";
+
+      if (order_up_team % 2 == 0)
+      {
+
+        if (trick_02_pts == 5)
+        {
+          team_02_pts += 2;
+          cout << "march!\n";
+        }
+        else
+        {
+          ++team_02_pts;
+        }
+      }
+      else
+      {
+        team_02_pts += 2;
+        cout << "euchred!\n";
+      }
+    }
+    else
+    {
+      cout << players[1]->get_name() << " and " << players[3]->get_name() << " win the hand\n";
+
+      if (order_up_team % 2 == 1)
+      {
+
+        if (trick_13_pts == 5)
+        {
+          team_13_pts += 2;
+          cout << "march!\n";
+        }
+        else
+        {
+          ++team_13_pts;
+        }
+      }
+      else
+      {
+        team_13_pts += 2;
+        cout << "euchred!\n";
+      }
+    }
+  }
+
+  // code for all the events for one hand - dealing, trump decision, tricks, and final point tallying (if someone euchred, marched, etc.)
+  void play_hand()
+  {
+    cout << "Hand " << hand_number << "\n";
+    cout << players[dealer]->get_name() << "deals\n";
+
+    Card upcard;
+
+    shuffle();
+
+    deal(upcard);
+
+    cout << upcard << " turned up\n";
+
+    make_trump(upcard);
+
+    int trick_02_pts = 0;
+    int trick_13_pts = 0;
+
+    play_tricks(trick_02_pts, trick_13_pts);
+
+    score_tally(trick_02_pts, trick_13_pts);
+
+    cout << players[0]->get_name() << " and " << players[2]->get_name() << "have" << team_02_pts << " points\n";
+    cout << players[1]->get_name() << " and " << players[3]->get_name() << "have" << team_13_pts << " points\n";
+  }
 };
 
 int main(int argc, char *argv[])
 {
-
   if (argc != 12)
   {
-    std::cout << "Usage: " << argv[0]
-              << " PACK_FILENAME [shuffle|noshuffle] "
-              << "POINTS_TO_WIN NAME1 TYPE1 NAME2 TYPE2 "
-              << "NAME3 TYPE3 NAME4 TYPE4\n";
+    cout << "Usage: " << argv[0]
+         << " PACK_FILENAME [shuffle|noshuffle] "
+         << "POINTS_TO_WIN NAME1 TYPE1 NAME2 TYPE2 "
+         << "NAME3 TYPE3 NAME4 TYPE4\n";
     return 1;
   }
 }
