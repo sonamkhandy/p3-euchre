@@ -68,35 +68,32 @@ public:
                 return false;
             }
         }
+        else if (is_dealer == true)
+        {
+            order_up_suit = nextsuit;
+            return true;
+        }
         else
         {
-            if (is_dealer == true)
+            for (int i = 0; i < hand.size(); ++i)
+            {
+                if (hand[i].is_left_bower(nextsuit))
+                {
+                    ++counter;
+                }
+                else if (hand[i].get_suit() == nextsuit && hand[i].is_face_or_ace())
+                {
+                    ++counter;
+                }
+            }
+            if (counter >= 1)
             {
                 order_up_suit = nextsuit;
                 return true;
             }
             else
             {
-                for (int i = 0; i < hand.size(); ++i)
-                {
-                    if (hand[i].is_left_bower(nextsuit))
-                    {
-                        ++counter;
-                    }
-                    else if (hand[i].get_suit() == nextsuit && hand[i].is_face_or_ace())
-                    {
-                        ++counter;
-                    }
-                }
-                if (counter >= 1)
-                {
-                    order_up_suit = nextsuit;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
         }
     }
