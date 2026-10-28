@@ -11,7 +11,8 @@ using namespace std;
 class Game
 {
 public:
-  Game(istream &pack_file, bool shuffle_input, int points_input, vector<Player *> &players_input)
+  Game(istream &pack_file, bool shuffle_input,
+       int points_input, vector<Player *> &players_input)
   {
     pack = Pack(pack_file);
     shuffle_mode = shuffle_input;
@@ -72,7 +73,8 @@ private:
     }
   }
 
-  // this would be the code to set up the start of the game - like all the cards the players have + the upcard
+  /* this would be the code to set up the start of the game -
+  like all the cards the players have + the upcard */
   void deal(Card &upcard)
   {
     int left_player = (dealer + 1) % 4;
@@ -94,7 +96,8 @@ private:
     upcard = pack.deal_one();
   }
 
-  // handles make trump for the game including dealer and such around the table - use make trump from player classes
+  /* handles make trump for the game including dealer
+  and such around the table - use make trump from player classes*/
   void make_trump(Card &upcard)
   {
     int left_player = (dealer + 1) % 4;
@@ -105,7 +108,8 @@ private:
 
       if (players[left_player]->make_trump(upcard, is_dealer, 1, trump_suit))
       {
-        cout << players[left_player]->get_name() << " orders up " << trump_suit << "\n\n";
+        cout << players[left_player]->get_name() << " orders up "
+             << trump_suit << "\n\n";
         players[dealer]->add_and_discard(upcard);
         order_up_team = left_player % 2;
         return;
@@ -125,7 +129,8 @@ private:
 
       if (players[left_player]->make_trump(upcard, is_dealer, 2, trump_suit))
       {
-        cout << players[left_player]->get_name() << " orders up " << trump_suit << "\n\n";
+        cout << players[left_player]->get_name() << " orders up "
+             << trump_suit << "\n\n";
         order_up_team = left_player % 2;
         return;
       }
@@ -153,7 +158,8 @@ private:
       for (int j = 1; j < 4; ++j)
       {
         Card comparative = players[(leader + j) % 4]->play_card(lead_card, trump_suit);
-        cout << comparative << " played by " << players[(leader + j) % 4]->get_name() << "\n";
+        cout << comparative << " played by " << players[(leader + j) % 4]->get_name()
+             << "\n";
 
         if (Card_less(greatest_card, comparative, lead_card, trump_suit))
         {
@@ -181,7 +187,8 @@ private:
   {
     if (trick_02_pts >= 3)
     {
-      cout << players[0]->get_name() << " and " << players[2]->get_name() << " win the hand\n";
+      cout << players[0]->get_name() << " and " << players[2]->get_name()
+           << " win the hand\n";
 
       if (order_up_team % 2 == 0)
       {
@@ -204,7 +211,8 @@ private:
     }
     else
     {
-      cout << players[1]->get_name() << " and " << players[3]->get_name() << " win the hand\n";
+      cout << players[1]->get_name() << " and " << players[3]->get_name()
+           << " win the hand\n";
 
       if (order_up_team % 2 == 1)
       {
@@ -227,7 +235,8 @@ private:
     }
   }
 
-  // code for all the events for one hand - dealing, trump decision, tricks, and final point tallying (if someone euchred, marched, etc.)
+  /* code for all the events for one hand - dealing, trump decision, tricks,
+  and final point tallying (if someone euchred, marched, etc.)*/
   void play_hand()
   {
     cout << "Hand " << hand_number << "\n";
@@ -250,8 +259,10 @@ private:
 
     score_tally(trick_02_pts, trick_13_pts);
 
-    cout << players[0]->get_name() << " and " << players[2]->get_name() << " have " << team_02_pts << " points\n";
-    cout << players[1]->get_name() << " and " << players[3]->get_name() << " have " << team_13_pts << " points\n\n";
+    cout << players[0]->get_name() << " and " << players[2]->get_name()
+         << " have " << team_02_pts << " points\n";
+    cout << players[1]->get_name() << " and " << players[3]->get_name()
+         << " have " << team_13_pts << " points\n\n";
   }
 };
 
@@ -259,10 +270,9 @@ int main(int argc, char *argv[])
 {
   if (argc != 12)
   {
-    cout << "Usage: " << argv[0]
-         << " PACK_FILENAME [shuffle|noshuffle] "
-         << "POINTS_TO_WIN NAME1 TYPE1 NAME2 TYPE2 "
-         << "NAME3 TYPE3 NAME4 TYPE4\n";
+    cout << "Usage: euchre.exe PACK_FILENAME [shuffle|noshuffle] "
+         << "POINTS_TO_WIN NAME1 TYPE1 NAME2 TYPE2 NAME3 TYPE3 "
+         << "NAME4 TYPE4" << endl;
     return 1;
   }
 
@@ -273,10 +283,11 @@ int main(int argc, char *argv[])
   cout << "\n";
 
   // I HATE STREAMS THEY MAKE NO SENSE (but this opens the pack file)
-  ifstream pack_file(argv[1]);
+  string pack_filename = argv[1];
+  ifstream pack_file(pack_filename);
   if (!pack_file.is_open())
   {
-    cout << "Can't open pack file\n";
+    cout << "Error opening " << pack_filename << endl;
     return 1;
   }
 
@@ -306,8 +317,9 @@ int main(int argc, char *argv[])
   vector<Player *> players_input; // create the players based on the input
   for (int i = 0; i < 4; ++i)
   {
-    string player_name = argv[4 + (2 * i)]; // i think this logic makes sense like mathmatically...
+    string player_name = argv[4 + (2 * i)];
     string player_type = argv[5 + (2 * i)];
+    // i think this logic makes sense like mathmatically...
 
     if (player_type != "Simple" && player_type != "Human")
     {

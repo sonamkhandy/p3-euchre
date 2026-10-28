@@ -38,7 +38,8 @@ public:
     // EFFECTS If Player wishes to order up a trump suit then return true and
     //   change order_up_suit to desired suit.  If Player wishes to pass, then do
     //   not modify order_up_suit and return false.
-    bool make_trump(const Card &upcard, bool is_dealer, int round, Suit &order_up_suit) const override
+    bool make_trump(const Card &upcard, bool is_dealer,
+                    int round, Suit &order_up_suit) const override
     {
         Suit upsuit = upcard.get_suit();
         Suit nextsuit = Suit_next(upsuit);
@@ -181,31 +182,28 @@ public:
 
         for (int i = 0; i < hand.size(); ++i)
         {
-            if (removed_card.get_suit(trump) == led_suit)
+            Suit current_suit = hand[i].get_suit(trump);
+            Suit removed_suit = removed_card.get_suit(trump);
+
+            if (removed_suit == led_suit)
             {
-                if (hand[i].get_suit(trump) == led_suit)
-                {
-                    if (Card_less(removed_card, hand[i], trump))
-                    {
-                        removed_card = hand[i];
-                        index_of_removed = i;
-                    }
-                }
-            }
-            else
-            {
-                if (hand[i].get_suit(trump) == led_suit)
+                if (current_suit == led_suit && Card_less(removed_card, hand[i], trump))
                 {
                     removed_card = hand[i];
                     index_of_removed = i;
                 }
-                else
+            }
+            else
+            {
+                if (current_suit == led_suit)
                 {
-                    if (Card_less(hand[i], removed_card, trump))
-                    {
-                        removed_card = hand[i];
-                        index_of_removed = i;
-                    }
+                    removed_card = hand[i];
+                    index_of_removed = i;
+                }
+                else if (Card_less(hand[i], removed_card, trump))
+                {
+                    removed_card = hand[i];
+                    index_of_removed = i;
                 }
             }
         }
@@ -246,56 +244,47 @@ public:
         std::sort(hand.begin(), hand.end());
     }
 
-    bool make_trump(const Card &upcard, bool is_dealer, int round, Suit &order_up_suit) const override
+    bool make_trump(const Card &upcard, bool is_dealer,
+                    int round, Suit &order_up_suit) const override
     {
         print_hand();
+        cout << "Human player " << name << ", please enter a suit, or \"pass\":\n";
+
         string decision;
+        cin >> decision;
 
-        if (round == 1)
+        if (decision != "pass")
         {
-            cout << "Human player " << name << ", please enter a pass, or \"order up\":\n";
-            cin >> decision;
-
-            if (decision != "pass")
+            if (round == 1)
             {
                 order_up_suit = upcard.get_suit();
-                return true;
             }
             else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            cout << "Human player " << name << ", please enter a suit, or \"pass\":\n";
-            cin >> decision;
-
-            if (decision != "pass")
             {
                 order_up_suit = string_to_suit(decision);
-                return true;
             }
-            else
-            {
-                return false;
-            }
+            return true;
         }
+        return false;
     }
 
     // REQUIRES Player has at least one card
     // EFFECTS  Player adds one card to hand and removes one card from hand.
     void add_and_discard(const Card &upcard) override
     {
-        hand.push_back(upcard);
-        std::sort(hand.begin(), hand.end());
         print_hand();
 
+        cout << "Discard upcard: [-1]\n";
         cout << "Human player " << name << ", please select a card to discard:\n";
+
         int discard_card_index;
         cin >> discard_card_index;
 
-        hand.erase(hand.begin() + discard_card_index);
+        if (discard_card_index != -1)
+        {
+            hand[discard_card_index] = upcard;
+            std::sort(hand.begin(), hand.end());
+        }
     }
 
     Card lead_card(Suit trump) override
