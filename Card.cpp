@@ -144,25 +144,11 @@ Suit Card::get_suit() const
 // HINT: the left bower is the trump suit!
 Suit Card::get_suit(Suit trump) const
 {
-  if (rank == JACK)
+  if (is_left_bower(trump))
   {
-    if (trump % 2 == 0 && suit % 2 == 0)
-    {
-      return trump;
-    }
-    if (trump % 2 == 1 && suit % 2 == 1)
-    {
-      return trump;
-    }
-    else
-    {
-      return suit;
-    }
+    return trump;
   }
-  else
-  {
-    return suit;
-  }
+  return suit;
 }
 
 // EFFECTS Returns true if card is a face card (Jack, Queen, King or Ace)
@@ -227,28 +213,18 @@ std::istream &operator>>(std::istream &is, Card &card)
 //   Does not consider trump.
 bool operator<(const Card &lhs, const Card &rhs)
 {
-  if (rhs.get_rank() > lhs.get_rank())
+  if (lhs.get_rank() != rhs.get_rank())
   {
-    return true;
+    return lhs.get_rank() < rhs.get_rank();
   }
-  else
-  {
-    return false;
-  }
+  return lhs.get_suit() < rhs.get_suit();
 }
 
 // EFFECTS Returns true if lhs is lower value than rhs or the same card as rhs.
 //   Does not consider trump.
 bool operator<=(const Card &lhs, const Card &rhs)
 {
-  if (rhs.get_rank() >= lhs.get_rank())
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return (lhs < rhs) || (lhs == rhs);
 }
 
 // EFFECTS Returns true if lhs is higher value than rhs.
@@ -269,7 +245,7 @@ bool operator>=(const Card &lhs, const Card &rhs)
 //   Does not consider trump.
 bool operator==(const Card &lhs, const Card &rhs)
 {
-  return !(lhs < rhs) && !(lhs > rhs);
+  return lhs.get_rank() == rhs.get_rank() && lhs.get_suit() == rhs.get_suit();
 }
 
 // EFFECTS Returns true if lhs is not the same card as rhs.

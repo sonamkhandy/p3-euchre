@@ -242,24 +242,45 @@ public:
     void add_card(const Card &c) override
     {
         hand.push_back(c);
-        print_hand();
+        sort(hand.begin(), hand.end());
     }
 
     bool make_trump(const Card &upcard, bool is_dealer, int round, Suit &order_up_suit) const override
     {
         print_hand();
         string decision;
-        cout << "Human player " << name << ", please enter a suit, or \"pass\":\n";
-        cin >> decision;
 
-        if (decision != "pass")
+        if (round == 1)
         {
-            order_up_suit = string_to_suit(decision);
-            return true;
+            cout << "Human player " << name << ", please enter a pass, or \"order up\":\n";
+            cin >> decision;
+
+            if (decision != "pass")
+            {
+                string up;
+                cin >> up;
+                order_up_suit = upcard.get_suit();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
-            return false;
+            cout << "Human player " << name << ", please enter a suit, or \"pass\":\n";
+            cin >> decision;
+
+            if (decision != "pass")
+            {
+                order_up_suit = string_to_suit(decision);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -267,23 +288,19 @@ public:
     // EFFECTS  Player adds one card to hand and removes one card from hand.
     void add_and_discard(const Card &upcard) override
     {
-        Suit order_up_suit = SPADES;
+        print_hand();
+
+        cout << "Discard upcard: [-1]\n";
+        cout << "Human player " << name << ", please select a card to discard:\n";
+
         int discard_card_index;
+        cin >> discard_card_index;
 
-        if (make_trump(upcard, true, 1, order_up_suit) == true)
+        if (discard_card_index != -1)
         {
-            print_hand();
-
-            cout << "Discard upcard: [-1]\n";
-            cout << "Human player " << name << ", please select a card to discard:\n";
-            cin >> discard_card_index;
-
-            if (discard_card_index != -1)
-            {
-                hand.erase(hand.begin() + discard_card_index);
-                hand.push_back(upcard);
-                // sort(hand.begin(), hand.end());
-            }
+            hand.erase(hand.begin() + discard_card_index);
+            hand.push_back(upcard);
+            sort(hand.begin(), hand.end());
         }
     }
 

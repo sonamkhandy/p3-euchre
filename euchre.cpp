@@ -64,12 +64,12 @@ private:
   // this just shuffles the deck
   void shuffle()
   {
+    pack.reset();
+
     if (shuffle_mode)
     {
       pack.shuffle();
     }
-    else
-      pack.reset();
   }
 
   // this would be the code to set up the start of the game - like all the cards the players have + the upcard
@@ -118,6 +118,7 @@ private:
       }
     }
 
+    left_player = (dealer + 1) % 4;
     for (int i = 0; i < 4; ++i)
     {
       bool is_dealer = (left_player == dealer);
@@ -250,7 +251,7 @@ private:
     score_tally(trick_02_pts, trick_13_pts);
 
     cout << players[0]->get_name() << " and " << players[2]->get_name() << " have " << team_02_pts << " points\n";
-    cout << players[1]->get_name() << " and " << players[3]->get_name() << " have " << team_13_pts << " points\n";
+    cout << players[1]->get_name() << " and " << players[3]->get_name() << " have " << team_13_pts << " points\n\n";
   }
 };
 
