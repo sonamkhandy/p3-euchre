@@ -264,4 +264,57 @@ int main(int argc, char *argv[])
          << "NAME3 TYPE3 NAME4 TYPE4\n";
     return 1;
   }
+
+  // I HATE STREAMS THEY MAKE NO SENSE (but this opens the pack file)
+  ifstream pack_file(argv[1]);
+  if (!pack_file.is_open())
+  {
+    cout << "Can't open pack file\n";
+    return 1;
+  }
+
+  bool shuffle_input; // for the shuffle input
+  string shuffle_yesno = argv[2];
+  if (shuffle_yesno == "shuffle")
+  {
+    shuffle_input = true;
+  }
+  else if (shuffle_yesno == "noshuffle")
+  {
+    shuffle_input = false;
+  }
+  else
+  {
+    cout << "Shuffle command incorrect \n";
+    return 1;
+  }
+
+  int points_input = stoi(argv[3]);
+  if (points_input < 1 || points_input > 100)
+  {
+    cout << "Points are not positive\n";
+    return 1;
+  }
+
+  vector<Player *> players_input; // create the players based on the input
+  for (int i = 0; i < 4; ++i)
+  {
+    string player_name = argv[4 + (2 * i)]; // i think this logic makes sense like mathmatically...
+    string player_type = argv[5 + (2 * i)];
+
+    if (player_type != "Simple" && player_type != "Human")
+    {
+      cout << "Type of player invalid \n";
+      return 1;
+    }
+    else
+    {
+      players_input.push_back(Player_factory(player_name, player_type));
+    }
+  }
+
+  Game game(pack_file, shuffle_input, points_input, players_input);
+  game.play();
+
+  return 0;
 }
