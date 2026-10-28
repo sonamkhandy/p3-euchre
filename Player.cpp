@@ -14,7 +14,6 @@ private:
     std::string name;
 
 public:
-
     SimplePlayer(const std::string &name_in)
     {
         name = name_in;
@@ -121,7 +120,6 @@ public:
         {
             hand[index_of_lowest] = upcard;
         }
-        
     }
 
     // REQUIRES Player has at least one card
@@ -220,7 +218,7 @@ class HumanPlayer : public Player
 private:
     std::vector<Card> hand;
     std::string name;
-    
+
 public:
     HumanPlayer(const std::string &name_in)
     {

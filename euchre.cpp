@@ -230,7 +230,7 @@ private:
   void play_hand()
   {
     cout << "Hand " << hand_number << "\n";
-    cout << players[dealer]->get_name() << "deals\n";
+    cout << players[dealer]->get_name() << " deals\n";
 
     Card upcard;
 
@@ -249,8 +249,8 @@ private:
 
     score_tally(trick_02_pts, trick_13_pts);
 
-    cout << players[0]->get_name() << " and " << players[2]->get_name() << "have" << team_02_pts << " points\n";
-    cout << players[1]->get_name() << " and " << players[3]->get_name() << "have" << team_13_pts << " points\n";
+    cout << players[0]->get_name() << " and " << players[2]->get_name() << " have " << team_02_pts << " points\n";
+    cout << players[1]->get_name() << " and " << players[3]->get_name() << " have " << team_13_pts << " points\n";
   }
 };
 
@@ -264,6 +264,12 @@ int main(int argc, char *argv[])
          << "NAME3 TYPE3 NAME4 TYPE4\n";
     return 1;
   }
+
+  for (int i = 0; i < argc; ++i)
+  {
+    cout << argv[i] << " ";
+  }
+  cout << "\n";
 
   // I HATE STREAMS THEY MAKE NO SENSE (but this opens the pack file)
   ifstream pack_file(argv[1]);

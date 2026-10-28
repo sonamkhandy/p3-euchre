@@ -181,38 +181,13 @@ bool Card::is_face_or_ace() const
 // EFFECTS Returns true if card is the Jack of the trump suit
 bool Card::is_right_bower(Suit trump) const
 {
-  if (suit == trump && rank == JACK)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return rank == JACK && suit == trump;
 }
 
 // EFFECTS Returns true if card is the Jack of the next suit
 bool Card::is_left_bower(Suit trump) const
 {
-  if (rank == JACK)
-  {
-    if (trump % 2 == 0 && suit % 2 == 0 && trump != suit)
-    {
-      return true;
-    }
-    if (trump % 2 == 1 && suit % 2 == 1 && trump != suit)
-    {
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
-  else
-  {
-    return false;
-  }
+  return rank == JACK && suit == Suit_next(trump);
 }
 
 // EFFECTS Returns true if the card is a trump card.  All cards of the trump
@@ -229,7 +204,7 @@ bool Card::is_trump(Suit trump) const
   }
 }
 
-// EFFECTS Prints Card to stream, for example "Two of Spades"
+// EFFECTS Prints Card to stream, for example "Two of Spades"cs
 std::ostream &operator<<(std::ostream &os, const Card &card)
 {
   os << card.get_rank() << " of " << card.get_suit();
@@ -307,27 +282,21 @@ bool operator!=(const Card &lhs, const Card &rhs)
 // EFFECTS returns the next suit, which is the suit of the same color
 Suit Suit_next(Suit suit)
 {
-  if (suit % 2 == 0)
+  if (suit == SPADES)
   {
-    if (suit == SPADES)
-    {
-      return CLUBS;
-    }
-    else
-    {
-      return SPADES;
-    }
+    return CLUBS;
+  }
+  else if (suit == CLUBS)
+  {
+    return SPADES;
+  }
+  else if (suit == HEARTS)
+  {
+    return DIAMONDS;
   }
   else
   {
-    if (suit == HEARTS)
-    {
-      return DIAMONDS;
-    }
-    else
-    {
-      return HEARTS;
-    }
+    return HEARTS;
   }
 }
 
@@ -335,7 +304,11 @@ Suit Suit_next(Suit suit)
 //  order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, Suit trump)
 {
-  if (b.is_right_bower(trump) == true)
+  if (a == b)
+  {
+    return false;
+  }
+  else if (b.is_right_bower(trump) == true)
   {
     return true;
   }
@@ -351,11 +324,11 @@ bool Card_less(const Card &a, const Card &b, Suit trump)
   {
     return false;
   }
-  else if (a.get_suit() == trump && b.get_suit() != trump)
+  else if (a.get_suit(trump) == trump && b.get_suit(trump) != trump)
   {
     return false;
   }
-  else if (a.get_suit() != trump && b.get_suit() == trump)
+  else if (a.get_suit(trump) != trump && b.get_suit(trump) == trump)
   {
     return true;
   }
@@ -369,24 +342,24 @@ bool Card_less(const Card &a, const Card &b, Suit trump)
 //   and the suit led to determine order, as described in the spec.
 bool Card_less(const Card &a, const Card &b, const Card &led_card, Suit trump)
 {
-  Suit led_suit = led_card.get_suit();
-  if (a.get_suit() != led_suit && b.get_suit() != led_suit)
+  if (a == b)
+  {
+    return false;
+  }
+  Suit led_suit = led_card.get_suit(trump);
+  if (a.get_suit(trump) == trump || b.get_suit(trump) == trump)
   {
     return Card_less(a, b, trump);
   }
-  else if (a.get_suit() == trump)
+  else if (a.get_suit(trump) == led_suit && b.get_suit(trump) == led_suit)
+  {
+    return (a < b);
+  }
+  else if (a.get_suit(trump) == led_suit)
   {
     return false;
   }
-  else if (b.get_suit() == trump)
-  {
-    return true;
-  }
-  else if (a.get_suit() == led_suit && b.get_suit() != led_suit)
-  {
-    return false;
-  }
-  else if (a.get_suit() != led_suit && b.get_suit() == led_suit)
+  else if (b.get_suit(trump) == led_suit)
   {
     return true;
   }
